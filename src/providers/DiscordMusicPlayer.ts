@@ -238,6 +238,7 @@ export class DiscordMusicPlayerInstance {
 
         this.player.on("debug", console.log);
         this.player.on("error", console.error);
+        
     }
 
     public joinVoiceChannel(voiceChannel: VoiceChannel | StageChannel, textChannel?: BaseGuildTextChannel | BaseGuildVoiceChannel) {
@@ -253,6 +254,12 @@ export class DiscordMusicPlayerInstance {
             guildId: this.voiceChannel.guild.id,
             adapterCreator: this.voiceChannel.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator
         });
+
+        this.voiceConnection.on(VoiceConnectionStatus.Signalling, console.log);
+        this.voiceConnection.on(VoiceConnectionStatus.Connecting, console.log);
+        this.voiceConnection.on(VoiceConnectionStatus.Ready, console.log);
+        this.voiceConnection.on(VoiceConnectionStatus.Disconnected, console.error);
+        this.voiceConnection.on(VoiceConnectionStatus.Destroyed, console.error);
 
         this.voiceConnection.on(
             VoiceConnectionStatus.Ready,
@@ -337,8 +344,8 @@ export class DiscordMusicPlayerInstance {
                 this.actualPlaybackURL = search.url;
             }
             
-            this.player.play(resource);
             this.voiceConnection.subscribe(this.player);
+            this.player.play(resource);
         } catch (error: any) {
             this.events.emit('error', new PlayerErrorEvent(this, error));
             this.skipTrack();
