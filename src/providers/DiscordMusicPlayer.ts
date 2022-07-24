@@ -235,6 +235,9 @@ export class DiscordMusicPlayerInstance {
         this.player.on('error', (error: Error) => {
             this.events.emit('error', new PlayerErrorEvent(this, error));
         });
+
+        this.player.on("debug", console.log);
+        this.player.on("error", console.error);
     }
 
     public joinVoiceChannel(voiceChannel: VoiceChannel | StageChannel, textChannel?: BaseGuildTextChannel | BaseGuildVoiceChannel) {
